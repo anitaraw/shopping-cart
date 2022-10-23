@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import DisplayProducts from "./DisplayProducts";
-import Cart from "./Cart";
-import { Button, Icon, Header, Grid, Label } from "semantic-ui-react";
+import { Icon, Header, Grid } from "semantic-ui-react";
 import {
   fetchProductList,
   fetchCartList,
   addToCartList,
   removeFromCartList,
 } from "./CartAPI";
-import SearchExampleStandard from "./features/SearchExampleStandard";
+import SearchProducts from "./features/SearchProducts";
 import CartLayout from "./features/CartLayout";
 
 function App() {
@@ -36,7 +35,14 @@ function App() {
 
   const handleAddToCart = async (item) => {
     const res = await addToCartList({ ...item, inCart: true, quantity: 1, totalPrice: item.price, currency: 'INR' });
-    getProductList();
+    const productListUpdate = productList.map(x => {
+      return item.productId === x.productId ? {
+        ...x,
+        inCart: true
+      }: x
+    });
+    setNumberOfItemsInCart(numberOfItemsInCart + 1);
+    setProductList(productListUpdate);
   };
 
   const handleRemoveFromCart = async (item) => {
@@ -54,6 +60,10 @@ function App() {
     getProductList();
   };
 
+  const updateProductList = (updatedProductList) =>{
+    setProductList(updatedProductList);
+  }
+
   return (
     <div className="App">
       <div className="header-container">
@@ -65,7 +75,10 @@ function App() {
               </Header>
             </Grid.Column>
             <Grid.Column width={6}>
-              <SearchExampleStandard productList={productList} />
+              <SearchProducts
+                productList={productList}
+                updateProductList={updateProductList}
+              />
             </Grid.Column>
             <Grid.Column width={5}>
               {!viewCart ? (
@@ -112,12 +125,6 @@ function App() {
       </div>
       <div className="container">
         {viewCart && (
-          // <Cart
-          //   cartList={cartList}
-          //   handleRemoveFromCart={handleRemoveFromCart}
-          //   handleViewProduct={handleViewProduct}
-          //   handleViewCart={handleViewCart}
-          // />
           <CartLayout
             cartList={cartList}
             handleRemoveFromCart={handleRemoveFromCart}

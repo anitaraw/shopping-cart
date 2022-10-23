@@ -11,6 +11,7 @@ import {
   Grid,
 } from "semantic-ui-react";
 import { checkoutCartItems, updateQuantity } from "../CartAPI";
+import { currencyFormatter } from "../util";
 
 const CartLayout = (props) => {
   const { cartList, handleRemoveFromCart, handleViewProduct, handleViewCart } =
@@ -53,9 +54,11 @@ const CartLayout = (props) => {
         quantity: item.quantity - 1,
       });
       handleViewCart();
-      const isItemSelectedToCheckout = itemsToCheckout.findIndex(x => x.productId === item.productId);
-      if(isItemSelectedToCheckout > -1){
-          setTotalSelectedItemsPrice(totalSelectedItemsPrice - item.price);
+      const isItemSelectedToCheckout = itemsToCheckout.findIndex(
+        (x) => x.productId === item.productId
+      );
+      if (isItemSelectedToCheckout > -1) {
+        setTotalSelectedItemsPrice(totalSelectedItemsPrice - item.price);
       }
     }
   };
@@ -63,24 +66,47 @@ const CartLayout = (props) => {
   const handleIncreaseQty = async (item) => {
     const res = await updateQuantity({ ...item, quantity: item.quantity + 1 });
     handleViewCart();
-    const isItemSelectedToCheckout = itemsToCheckout.findIndex(x => x.productId === item.productId);
-    if(isItemSelectedToCheckout > -1){
-        setTotalSelectedItemsPrice(totalSelectedItemsPrice + item.price);
+    const isItemSelectedToCheckout = itemsToCheckout.findIndex(
+      (x) => x.productId === item.productId
+    );
+    if (isItemSelectedToCheckout > -1) {
+      setTotalSelectedItemsPrice(totalSelectedItemsPrice + item.price);
+    }
+  };
+
+  const removeFromCart = (selectedProduct) => {
+    handleRemoveFromCart(selectedProduct);
+    const isItemSelectedToCheckout = itemsToCheckout.findIndex(
+      (x) => x.productId === selectedProduct.productId
+    );
+    if (isItemSelectedToCheckout > -1) {
+      setTotalSelectedItemsPrice(
+        totalSelectedItemsPrice -
+          selectedProduct.quantity * selectedProduct.price
+      );
     }
   };
 
   return (
     <>
-      <Table padded="very" singleLine>
+      <Table padded="very">
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell textAlign="center">
               Select Product
             </Table.HeaderCell>
-            <Table.HeaderCell>Product</Table.HeaderCell>
+            <Table.HeaderCell
+              width={1}
+              style={{ padding: "0rem", margin: "0rem", paddingLeft: "1rem" }}
+            >
+              Product
+            </Table.HeaderCell>
+            <Table.HeaderCell width={7} />
             <Table.HeaderCell>Unit Price</Table.HeaderCell>
             <Table.HeaderCell>Total Price</Table.HeaderCell>
-            <Table.HeaderCell textAlign="center">Action</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center" width={5}>
+              Action
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -88,7 +114,7 @@ const CartLayout = (props) => {
           {cartList &&
             cartList.map((item) => {
               return (
-                <Table.Row style={{ marginBottom: "2rem" }} color={'green'}>
+                <Table.Row style={{ marginBottom: "2rem" }} color={"green"}>
                   <Table.Cell textAlign="center">
                     <Checkbox
                       id={item.productId}
@@ -96,26 +122,36 @@ const CartLayout = (props) => {
                       onClick={(e) => handleProductSelect(e, item)}
                     />
                   </Table.Cell>
-                  <Table.Cell>
-                    <Header as="h4" image>
-                      <Image
-                        src="https://react.semantic-ui.com/images/avatar/large/matthew.png"
-                        rounded
-                        size="mini"
-                      />
-                      <Header.Content>
-                        {item.title}
-                        <Header.Subheader>{item.description}</Header.Subheader>
-                      </Header.Content>
-                    </Header>
+                  <Table.Cell
+                    width={1}
+                    style={{ padding: "0rem", margin: "0rem" }}
+                  >
+                    <Image
+                      src={
+                        item.image
+                          ? item.image
+                          : "https://react.semantic-ui.com/images/avatar/large/matthew.png"
+                      }
+                      rounded
+                      size="mini"
+                    />
+                  </Table.Cell>
+                  <Table.Cell
+                    width={7}
+                    style={{ paddingLeft: "0rem", marginLeft: "0rem" }}
+                  >
+                    <Header.Content>
+                      {item.title}
+                      <Header.Subheader>{item.description}</Header.Subheader>
+                    </Header.Content>
                   </Table.Cell>
                   <Table.Cell>
-                    {item.currency} {item.price}
+                    {currencyFormatter.format(item.price)}
                   </Table.Cell>
                   <Table.Cell>
-                    {item.currency} {item.price * item.quantity}
+                    {currencyFormatter.format(item.price * item.quantity)}
                   </Table.Cell>
-                  <Table.Cell textAlign="center">
+                  <Table.Cell textAlign="center" width={5}>
                     <Button.Group>
                       <Button
                         icon="minus"
@@ -124,8 +160,7 @@ const CartLayout = (props) => {
                         onClick={() => handleDecreaseQty(item)}
                         disabled={item.quantity === 1}
                       />
-                      <Icon name="minus" />
-                      <Label basic size="big">
+                      <Label basic size="big" style={{ width: "4rem" }}>
                         {item.quantity}
                       </Label>
                       <Button
@@ -136,7 +171,7 @@ const CartLayout = (props) => {
                       />
                     </Button.Group>
                     <Button
-                      onClick={() => handleRemoveFromCart(item)}
+                      onClick={() => removeFromCart(item)}
                       basic
                       color="red"
                       style={{ marginLeft: "1rem" }}
@@ -154,19 +189,19 @@ const CartLayout = (props) => {
             <Table.HeaderCell />
             <Table.HeaderCell />
             <Table.HeaderCell />
-            <Table.HeaderCell textAlign="center">
-              <b>Total Price: {totalSelectedItemsPrice}</b>
+            <Table.HeaderCell />
+            <Table.HeaderCell textAlign="right">
+              <span style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
+                Total Price: {currencyFormatter.format(totalSelectedItemsPrice)}
+              </span>
+              <Button icon size="big" positive onClick={handleCartCheckout}>
+                <Icon name="check" />
+                Checkout
+              </Button>
             </Table.HeaderCell>
           </Table.Row>
         </Table.Footer>
       </Table>
-
-      <div style={{ float: "right", marginTop: "4rem" }}>
-        <Button icon size="big" positive onClick={handleCartCheckout}>
-          <Icon name="check" />
-          Checkout
-        </Button>
-      </div>
     </>
   );
 };

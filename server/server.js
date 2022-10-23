@@ -2,7 +2,7 @@ import express from "express";
 import fs from "fs";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { debug } from "console";
+import _ from "lodash";
 const app = express();
 
 const port = 8000;
@@ -63,27 +63,32 @@ app.post("/cart/remove", (req, res) => {
   });
 });
 
-const addCheckoutedItems = (newItems) =>{
-    jsonReader("./DB/CheckedOutProducts.json", (err, checkoutItems) => {
+const addCheckoutedItems = (newItems) => {
+  jsonReader("./DB/CheckedOutProducts.json", (err, checkoutItems) => {
+    if (err) {
+      console.log("Error reading file:", err);
+      return;
+    }
+    console.log("checkouted", checkoutItems);
+    let updates = newItems.map((x) => {
+      return { ...x, date: new Date() };
+    });
+    updates = [...checkoutItems, updates];
+
+    console.log("checkoutUpdate ", updates);
+
+    fs.writeFile(
+      "./DB/CheckedOutProducts.json",
+      JSON.stringify(checkoutItems),
+      (err) => {
         if (err) {
-          console.log("Error reading file:", err);
-          return;
         }
-        console.log('checkouted', checkoutItems)
-        let updates  = newItems.map(x => { return {...x, date: new Date()}});
-        updates = [...checkoutItems, updates];
-
-        console.log('checkoutUpdate ', updates)
-
-        fs.writeFile("./DB/CheckedOutProducts.json", JSON.stringify(checkoutItems), (err) => {
-          if (err) {
-          }
-        });
-      });
+      }
+    );
+  });
 };
 
 app.post("/cart/add", (req, res) => {
-  debug;
   const body = req.body;
   jsonReader("./DB/CartList.json", (err, cartItem) => {
     if (err) {
@@ -92,7 +97,7 @@ app.post("/cart/add", (req, res) => {
     }
     const index = cartItem.findIndex((x) => x.productId == body.productId);
     if (index < 0) {
-      console.log('item to push ', body)
+      console.log("item to push ", body);
       cartItem.push(body);
     }
     fs.writeFile("./DB/CartList.json", JSON.stringify(cartItem), (err) => {
@@ -106,8 +111,6 @@ app.post("/cart/add", (req, res) => {
         );
       }
     });
-    
-
   });
 });
 
@@ -151,7 +154,7 @@ app.post("/cart/checkout", (req, res) => {
       }
       return true;
     });
-    
+
     addCheckoutedItems(checkoutCartItemsList);
 
     fs.writeFile("./DB/CartList.json", JSON.stringify(updatedList), (err) => {
@@ -169,7 +172,6 @@ app.post("/cart/checkout", (req, res) => {
 });
 
 app.post("/cart/updateQty", (req, res) => {
-  debug;
   const body = req.body;
   jsonReader("./DB/CartList.json", (err, cartItem) => {
     if (err) {
@@ -192,5 +194,25 @@ app.post("/cart/updateQty", (req, res) => {
         res.send({ status: 200 });
       }
     });
+  });
+});
+
+app.get("/products/search", (req, res) => {
+  // console.log('request', req);
+  const searchkey = req.query.searchkey;
+  console.log("searchKey ", searchkey);
+  jsonReader("./DB/ProductList.json", (err, cartItem) => {
+    if (err) {
+      console.log("Error reading file:", err);
+      return;
+    }
+    let searchedResults = cartItem;
+    if (searchkey.length > 0) {
+      const re = new RegExp(_.escapeRegExp(searchkey), "i");
+      const isMatch = (result) => re.test(result.title);
+      searchedResults = _.filter(cartItem, isMatch);
+    }
+
+    res.send(searchedResults);
   });
 });
