@@ -1,9 +1,6 @@
-import _ from "lodash";
 import React, {
   useEffect,
-  useReducer,
   useRef,
-  useCallback,
   useState,
 } from "react";
 import { Search } from "semantic-ui-react";
@@ -12,11 +9,17 @@ import "./SearchProducts.css";
 import { searchProducts } from "../CartAPI";
 
 function SearchProducts(props) {
-  const { updateProductList } = props;
+  const { updateProductList, viewCart } = props;
   const [results, setResults] = useState([]);
   const [value, setValue] = useState();
 
   const timeoutRef = useRef();
+
+  useEffect(() =>{
+    if(viewCart){
+      setValue('')
+    }
+  }, [viewCart]);
 
   const getSearchResults = async (searchKey) => {
     const response = await searchProducts(searchKey);
@@ -30,11 +33,11 @@ function SearchProducts(props) {
     updateProductList(response);
   };
 
-  const handleSearchChange = useCallback((e, data) => {
+  const handleSearchChange = (e, data) => {
     clearTimeout(timeoutRef.current);
     setValue(data.value);
     getSearchResults(data.value);
-  }, []);
+  };
 
   const onResultSelect = (data) => {
     console.log(data);

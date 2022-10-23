@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   const handleAddToCart = async (item) => {
-    const res = await addToCartList({ ...item, inCart: true, quantity: 1, totalPrice: item.price, currency: 'INR' });
+    await addToCartList({ ...item, inCart: true, quantity: 1, totalPrice: item.price, currency: 'INR' });
     const productListUpdate = productList.map(x => {
       return item.productId === x.productId ? {
         ...x,
@@ -46,7 +46,7 @@ function App() {
   };
 
   const handleRemoveFromCart = async (item) => {
-    const res = await removeFromCartList(item);
+    await removeFromCartList(item);
     getCartList();
   };
 
@@ -61,6 +61,7 @@ function App() {
   };
 
   const updateProductList = (updatedProductList) =>{
+    setViewCart(false);
     setProductList(updatedProductList);
   }
 
@@ -71,13 +72,15 @@ function App() {
           <Grid.Row>
             <Grid.Column width={5}>
               <Header className="header" as="h1">
-                Anu Mart
+                Mart
+                <Icon name="fly" style={{color:"#817f3d"}}/>
               </Header>
             </Grid.Column>
             <Grid.Column width={6}>
               <SearchProducts
                 productList={productList}
                 updateProductList={updateProductList}
+                viewCart={viewCart}
               />
             </Grid.Column>
             <Grid.Column width={5}>

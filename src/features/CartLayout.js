@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 import {
   Button,
-  Card,
   Image,
   Checkbox,
   Label,
   Icon,
   Header,
-  Table,
-  Grid,
+  Table
 } from "semantic-ui-react";
 import { checkoutCartItems, updateQuantity } from "../CartAPI";
 import { currencyFormatter } from "../util";
+import DialogModal from "./DialogModal";
 
 const CartLayout = (props) => {
   const { cartList, handleRemoveFromCart, handleViewProduct, handleViewCart } =
     props;
   const [itemsToCheckout, setItemsToCheckout] = useState([]);
   const [totalSelectedItemsPrice, setTotalSelectedItemsPrice] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
+
   const handleProductSelect = (event, selectedProduct) => {
     console.log(selectedProduct);
     const index = itemsToCheckout.findIndex(
-      (x) => x.productId == selectedProduct.productId
+      (x) => x.productId === selectedProduct.productId
     );
 
     if (event.target.checked && index < 0) {
@@ -43,13 +44,18 @@ const CartLayout = (props) => {
   };
 
   const handleCartCheckout = async () => {
-    const res = await checkoutCartItems(itemsToCheckout);
+    await checkoutCartItems(itemsToCheckout);
+    setOpenModal(true);
+  };
+
+  const handleModalCheckout = () => {
+    setOpenModal(false);
     handleViewProduct();
   };
 
   const handleDecreaseQty = async (item) => {
     if (item.quantity > 1) {
-      const res = await updateQuantity({
+      await updateQuantity({
         ...item,
         quantity: item.quantity - 1,
       });
@@ -64,7 +70,7 @@ const CartLayout = (props) => {
   };
 
   const handleIncreaseQty = async (item) => {
-    const res = await updateQuantity({ ...item, quantity: item.quantity + 1 });
+    await updateQuantity({ ...item, quantity: item.quantity + 1 });
     handleViewCart();
     const isItemSelectedToCheckout = itemsToCheckout.findIndex(
       (x) => x.productId === item.productId
@@ -194,7 +200,7 @@ const CartLayout = (props) => {
               <span style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
                 Total Price: {currencyFormatter.format(totalSelectedItemsPrice)}
               </span>
-              <Button icon size="big" positive onClick={handleCartCheckout}>
+              <Button icon size="big" positive onClick={handleCartCheckout} disabled={totalSelectedItemsPrice > 0 ? false : true}>
                 <Icon name="check" />
                 Checkout
               </Button>
@@ -202,6 +208,16 @@ const CartLayout = (props) => {
           </Table.Row>
         </Table.Footer>
       </Table>
+
+      {
+        <DialogModal
+          showModal={openModal}
+          title="Order Confirmed!"
+          message="Your order has been successfully placed."
+          handleConfirm={handleModalCheckout}
+          handleModalClose={handleModalCheckout}
+        />
+      }
     </>
   );
 };
