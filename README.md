@@ -10,7 +10,7 @@ Installs dependencies required to work with the app.
 Run this cmd at root level and inside /server folder as well.
 
 ### START SERVER
-Go to /server path and run `npm start` to the server at port 8000
+Go to /server path and run `npm start` to start server at port 8000
 
 ### START CLIENT
 
