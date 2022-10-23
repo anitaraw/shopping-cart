@@ -92,6 +92,7 @@ app.post("/cart/add", (req, res) => {
     }
     const index = cartItem.findIndex((x) => x.productId == body.productId);
     if (index < 0) {
+      console.log('item to push ', body)
       cartItem.push(body);
     }
     fs.writeFile("./DB/CartList.json", JSON.stringify(cartItem), (err) => {
@@ -179,6 +180,7 @@ app.post("/cart/updateQty", (req, res) => {
     const updatedList = cartItem.map((item) => {
       if (item.productId === body.productId) {
         item.quantity = body.quantity;
+        item.totalPrice = body.quantity * item.quantity;
       }
       return item;
     });

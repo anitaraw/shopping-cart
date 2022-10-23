@@ -5,7 +5,8 @@
       "description": "Product  Description 1",
       "image": "",
       "inCart": false,
-      "price": "$59.49"
+      "price": 199,
+      "currency": "INR"
     },
     {
       "productId": "product2",
@@ -13,7 +14,8 @@
       "description": "Product  Description 2",
       "image": "",
       "inCart": false,
-      "price": "$59.49"
+      "price": 199,
+      "currency": "INR"
     },
     {
       "productId": "product3",
@@ -21,7 +23,8 @@
       "description": "Product  Description 3",
       "image": "",
       "inCart": false,
-      "price": "$59.49"
+      "price": 199,
+      "currency": "INR"
     },
     {
       "productId": "product4",
@@ -29,7 +32,8 @@
       "description": "Product  Description 4",
       "image": "",
       "inCart": false,
-      "price": "$59.49"
+      "price": 199,
+      "currency": "INR"
     },
     {
         "productId": "product5",
@@ -37,7 +41,8 @@
         "description": "Product  Description 5",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product6",
@@ -45,7 +50,8 @@
         "description": "Product  Description 6",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product7",
@@ -53,7 +59,8 @@
         "description": "Product  Description 7",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product8",
@@ -61,7 +68,8 @@
         "description": "Product  Description 8",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product9",
@@ -69,7 +77,8 @@
         "description": "Product  Description 9",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product10",
@@ -77,7 +86,8 @@
         "description": "Product  Description 10",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product11",
@@ -85,7 +95,8 @@
         "description": "Product  Description 11",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       },
       {
         "productId": "product12",
@@ -93,6 +104,7 @@
         "description": "Product  Description 12",
         "image": "",
         "inCart": false,
-        "price": "$59.49"
+        "price": 199,
+        "currency": "INR"
       }
   ]

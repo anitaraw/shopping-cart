@@ -10,6 +10,7 @@ import {
   removeFromCartList,
 } from "./CartAPI";
 import SearchExampleStandard from "./features/SearchExampleStandard";
+import CartLayout from "./features/CartLayout";
 
 function App() {
   const [cartList, setCartList] = useState([]);
@@ -34,7 +35,7 @@ function App() {
   }, []);
 
   const handleAddToCart = async (item) => {
-    const res = await addToCartList({ ...item, inCart: true, quantity: 1 });
+    const res = await addToCartList({ ...item, inCart: true, quantity: 1, totalPrice: item.price, currency: 'INR' });
     getProductList();
   };
 
@@ -111,7 +112,13 @@ function App() {
       </div>
       <div className="container">
         {viewCart && (
-          <Cart
+          // <Cart
+          //   cartList={cartList}
+          //   handleRemoveFromCart={handleRemoveFromCart}
+          //   handleViewProduct={handleViewProduct}
+          //   handleViewCart={handleViewCart}
+          // />
+          <CartLayout
             cartList={cartList}
             handleRemoveFromCart={handleRemoveFromCart}
             handleViewProduct={handleViewProduct}
